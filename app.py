@@ -1,3 +1,5 @@
+# Gabriella Gazdecki
+# SI 364 W18 HW5
 import os
 from flask import Flask, render_template, session, redirect, url_for, flash, request
 from flask_script import Manager, Shell
@@ -149,14 +151,13 @@ def one_list(ident):
 @app.route('/update/<item>',methods=["GET","POST"])
 def update(item):
     form = UpdatePriorityForm()
-    if form.validate_on_submit:
-        new_priority = form.new_priority.data
-        item = TodoItem.query.filter_by(description=item).first()
-        item.priority = new_priority
-        db.session.commit()
-        flash("Updated priority of {}".format(item))
-        return redirect(url_for('all_lists'))
-    return render_template('update_item.html',item_name = item, form = form)
+    if form.validate_on_submit():
+         i = TodoItem.query.filter_by(description=item).first()
+         i.priority = form.new_priority.data
+         db.session.commit()
+         flash("Updated priority of " + item)
+         return redirect(url_for('all_lists'))
+    return render_template('update_item.html',item_name= item, form= form)
     # This code should use the form you created above for updating the specific item and manage the process of updating the item's priority.
     # Once it is updated, it should redirect to the page showing all the links to todo lists.
     # It should flash a message: Updated priority of <the description of that item>
