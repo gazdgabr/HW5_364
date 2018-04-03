@@ -82,6 +82,14 @@ class UpdatePriorityForm(FlaskForm):
 class DeleteButtonForm(FlaskForm):
     submit = SubmitField('Delete')
 
+## List name updation form
+class ListUpdateButtonForm(FlaskForm):
+    submit = SubmitField('Update')
+
+class ListUpdateForm(FlaskForm):
+    new_title = StringField("Rename your to-do list:", validators=[Required()])
+    submit = SubmitField('Update')
+
 ################################
 ####### Helper Functions #######
 ################################
@@ -130,8 +138,9 @@ def index():
 @app.route('/all_lists',methods=["GET","POST"])
 def all_lists():
     form = DeleteButtonForm()
+    otherform = ListUpdateButtonForm()
     lsts = TodoList.query.all()
-    return render_template('all_lists.html',todo_lists=lsts, form=form)
+    return render_template('all_lists.html',todo_lists=lsts, form=form,form2=otherform)
 
 # TODO 364: Update the all_lists.html template and the all_lists view function such that there is a delete button available for each ToDoList saved.
 # When you click on the delete button for each list, that list should get deleted -- this is also addressed in a later TODO.
@@ -177,6 +186,16 @@ def delete(lst):
     # Should flash a message about what was deleted, e.g. Deleted list <title of list>
     # And should redirect the user to the page showing all the todo lists
     # HINT: Compare against what you've done for updating and class notes -- the goal here is very similar, and in some ways simpler.
+@app.route('/listupdate/<lst>', methods=["GET","POST"])
+def update_list(lst):
+    form = ListUpdateForm()
+    if form.validate_on_submit():
+        l = TodoList.query.filter_by(title=lst).first()
+        l.title = form.new_title.data
+        db.session.commit()
+        flash("Updated title of " + lst)
+        return redirect(url_for('all_lists'))
+    return render_template('update_list.html', list_name=lst, form=form)
 
 if __name__ == "__main__":
     db.create_all()

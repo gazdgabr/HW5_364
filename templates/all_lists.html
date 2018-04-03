@@ -19,7 +19,12 @@ There are no TODO lists to show.
     <form method="POST" action="/delete/{{ l.title }}">
          {{ form.hidden_tag() }}
          {{ form.submit }}
+     </form><br>
+    <form method="POST" action="/listupdate/{{ l.title }}">
+         {{ form2.hidden_tag() }}
+         {{ form2.submit }}
      </form>
+
 {% endfor %}
 </ul>
 {% endif %}
